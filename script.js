@@ -20,15 +20,10 @@ function secondsToMinutesSeconds(seconds) {
   return `${formattedMinutes}:${formattedSeconds}`;
 }
 
-const baseURL = window.location.origin.includes('github.io') 
-    ? '/spotify-clone-done' 
-    : '';
-
-
 async function getSongs(folder) {
   currentFolder = folder;
 
-  let a = await fetch(`${baseURL}/songs/${folder}/`);
+  let a = await fetch(`/${folder}/`);
   let response = await a.text();
   let div = document.createElement("div");
   div.innerHTML = response;
@@ -87,7 +82,7 @@ async function getSongs(folder) {
 }
 
 const playMusic = (track, pause = false) => {
-  currentSong.src = `${baseURL}/songs//${currentFolder}/` + track;
+  currentSong.src = `/${currentFolder}/` + track;
   // console.log(currentSong.src);
   // currentSong.play()
 
@@ -131,13 +126,11 @@ async function displayAlbums() {
   let array = Array.from(anchors);
   for (let index = 0; index < array.length; index++) {
     const e = array[index];
-    if (e.href.includes("/songs") && !e.href.includes(".htaccess")) {
+    if (e.href.includes("/songs/")) {
       // console.log(e.href.split("/").slice(-1)[0]);
       let folder = e.href.split("/").slice(-1)[0];
 
-      let a = await fetch(`${baseURL}/songs/${folder}/info.json`);
-
-      // let a = await fetch(`/songs/${folder}/info.json`);
+      let a = await fetch(`/songs/${folder}/info.json`);
       let response = await a.json();
       // console.log(response);
 
@@ -163,9 +156,7 @@ async function displayAlbums() {
   Array.from(document.getElementsByClassName("card")).forEach((e) => {
     e.addEventListener("click", async (item) => {
       console.log("Fetching Songs");
-      // songs = await getSongs(`songs/${item.currentTarget.dataset.folder}`);
-      songs = await getSongs(item.currentTarget.dataset.folder);
-
+      songs = await getSongs(`songs/${item.currentTarget.dataset.folder}`);
       playMusic(songs[0]);
     });
   });
